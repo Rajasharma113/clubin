@@ -1,0 +1,14 @@
+node_modules/
+*.log
+.env
+.DS_Store
+Thumbs.db
+.vscode/
+dist/
+build/
+coverage/
+*.sqlite
+*.db
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

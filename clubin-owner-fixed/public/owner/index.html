@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Club Owner Portal - Club!n</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        .owner-login-section {
+            background: var(--gradient-secondary);
+            padding: 100px 0;
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+        }
+        .owner-dashboard-section {
+            background: var(--gradient-secondary);
+            padding: 60px 0;
+            min-height: 90vh;
+        }
+        .owner-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-24);
+            margin-bottom: var(--space-32);
+        }
+        .owner-tabs {
+            display: flex;
+            gap: var(--space-16);
+            margin-bottom: var(--space-32);
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .owner-tab {
+            padding: 16px 32px;
+            background: var(--color-surface);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            color: var(--color-text);
+            font-weight: var(--font-weight-semibold);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: var(--font-size-base);
+            backdrop-filter: blur(10px);
+        }
+        .owner-tab:hover {
+            background: var(--color-surface-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.15);
+        }
+        .owner-tab.active {
+            background: var(--gradient-primary);
+            color: white;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.4);
+        }
+        .owner-content {
+            background: var(--gradient-card);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--color-border);
+            padding: var(--space-32);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-card);
+        }
+        .bookings-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: var(--space-20);
+        }
+        .bookings-table th,
+        .bookings-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--color-border);
+        }
+        .bookings-table th {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--color-primary);
+            font-weight: var(--font-weight-semibold);
+        }
+        .bookings-table td {
+            color: var(--color-text-secondary);
+        }
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: var(--radius-full);
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-semibold);
+        }
+        .status-confirmed {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--color-success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        .status-checkedin {
+            background: rgba(6, 182, 212, 0.15);
+            color: var(--color-accent);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+        }
+        .action-buttons {
+            display: flex;
+            gap: var(--space-8);
+        }
+        .btn-small {
+            padding: 6px 12px;
+            font-size: var(--font-size-sm);
+            border-radius: var(--radius-base);
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav container">
+            <div class="nav__brand">
+                <h1 class="nav__logo" style="background: linear-gradient(135deg, #ff6b6b, #ff8e8e); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Club!n Owner</h1>
+                <p class="nav__tagline">Professional Nightclub Management</p>
+            </div>
+            <div id="ownerNavLinks" class="nav__links">
+                <a href="/" class="nav__link">← Back to Main Site</a>
+                <button id="ownerLoginBtn" class="btn btn--primary">Owner Login</button>
+            </div>
+            <div id="ownerNavUser" class="nav__user hidden">
+                <span id="ownerWelcome" class="user__welcome">Welcome Owner!</span>
+                <button id="ownerLogoutBtn" class="btn btn--outline">Logout</button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Owner Login/Register Section -->
+    <section id="ownerAuth" class="owner-login-section">
+        <div class="container">
+            <div class="auth__container">
+                <div class="auth__tabs">
+                    <button class="auth__tab active" data-tab="ownerLogin">Owner Login</button>
+                    <button class="auth__tab" data-tab="ownerRegister">Register Club</button>
+                </div>
+
+                <form id="ownerLoginForm" class="auth__form">
+                    <h2 class="auth__title">Welcome Back, Club Owner!</h2>
+                    <div class="form__grid">
+                        <div class="form-group">
+                            <label class="form-label">Email <span class="required">*</span></label>
+                            <input type="email" name="ownerEmail" class="form-control" placeholder="Enter your email" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Password <span class="required">*</span></label>
+                            <input type="password" name="ownerPassword" class="form-control" placeholder="Enter your password" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn--primary btn--full-width">Access Dashboard</button>
+                </form>
+
+                <form id="ownerRegisterForm" class="auth__form hidden">
+                    <h2 class="auth__title">Register Your Nightclub</h2>
+                    <div class="form__grid">
+                        <div class="form-group">
+                            <label class="form-label">Club Name <span class="required">*</span></label>
+                            <input type="text" name="clubName" class="form-control" placeholder="Your club name" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Owner Name <span class="required">*</span></label>
+                            <input type="text" name="ownerName" class="form-control" placeholder="Your full name" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email <span class="required">*</span></label>
+                            <input type="email" name="ownerRegEmail" class="form-control" placeholder="Business email" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Phone <span class="required">*</span></label>
+                            <input type="tel" name="ownerPhone" class="form-control" placeholder="Business phone" required>
+                        </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label class="form-label">Club Address <span class="required">*</span></label>
+                            <textarea name="clubAddress" class="form-control" rows="3" placeholder="Complete club address" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Password <span class="required">*</span></label>
+                            <input type="password" name="ownerRegPassword" class="form-control" placeholder="Create password" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Confirm Password <span class="required">*</span></label>
+                            <input type="password" name="ownerConfirmPassword" class="form-control" placeholder="Confirm password" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn--primary btn--full-width">Register My Club</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Owner Dashboard Section -->
+    <section id="ownerDashboard" class="owner-dashboard-section hidden">
+        <div class="container">
+            <div class="dashboard__header">
+                <h2 id="ownerDashboardTitle" class="dashboard__title">Club Dashboard</h2>
+                <div id="ownerStats" class="owner-stats">
+                    <div class="stat">
+                        <div id="totalBookings" class="stat__value">0</div>
+                        <div class="stat__label">Total Bookings</div>
+                    </div>
+                    <div class="stat">
+                        <div id="totalEvents" class="stat__value">0</div>
+                        <div class="stat__label">Events Created</div>
+                    </div>
+                    <div class="stat">
+                        <div id="totalAttendance" class="stat__value">0</div>
+                        <div class="stat__label">Total Attendance</div>
+                    </div>
+                    <div class="stat">
+                        <div id="activeBookings" class="stat__value">0</div>
+                        <div class="stat__label">Today's Bookings</div>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="owner-tabs">
+                <button class="owner-tab active" data-section="ownerOverview">📊 Overview</button>
+                <button class="owner-tab" data-section="ownerBookings">🎫 Bookings</button>
+                <button class="owner-tab" data-section="ownerAttendance">✅ Attendance</button>
+                <button class="owner-tab" data-section="ownerEvents">🎉 Events</button>
+                <button class="owner-tab" data-section="ownerSettings">⚙️ Club Settings</button>
+            </nav>
+
+            <!-- Overview Section -->
+            <section id="ownerOverview" class="owner-content">
+                <h3 style="color: var(--color-primary); margin-bottom: var(--space-24);">Club Overview</h3>
+                <div id="clubInfo" style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-24);">
+                    <div>
+                        <h4 style="color: var(--color-text); margin-bottom: var(--space-16);">Club Details</h4>
+                        <p id="clubNameDisplay" style="color: var(--color-text-secondary); margin-bottom: var(--space-8);">Club Name: Loading...</p>
+                        <p id="clubAddressDisplay" style="color: var(--color-text-secondary); margin-bottom: var(--space-8);">Address: Loading...</p>
+                        <p id="ownerNameDisplay" style="color: var(--color-text-secondary);">Owner: Loading...</p>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--color-text); margin-bottom: var(--space-16);">Recent Activity</h4>
+                        <div id="recentActivity" style="color: var(--color-text-secondary);">
+                            <p>Loading recent activity...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bookings Section -->
+            <section id="ownerBookings" class="owner-content hidden">
+                <h3 style="color: var(--color-primary); margin-bottom: var(--space-24);">Club Bookings</h3>
+                <div id="bookingsTable">
+                    <p style="color: var(--color-text-secondary);">Loading bookings...</p>
+                </div>
+            </section>
+
+            <!-- Attendance Section -->
+            <section id="ownerAttendance" class="owner-content hidden">
+                <h3 style="color: var(--color-primary); margin-bottom: var(--space-24);">Attendance Management</h3>
+                <div id="attendanceTable">
+                    <p style="color: var(--color-text-secondary);">Loading attendance data...</p>
+                </div>
+            </section>
+
+            <!-- Events Section -->
+            <section id="ownerEvents" class="owner-content hidden">
+                <h3 style="color: var(--color-primary); margin-bottom: var(--space-24);">Event Management</h3>
+                <button id="createEventBtn" class="btn btn--primary" style="margin-bottom: var(--space-24);">🎉 Create New Event</button>
+                <div id="eventsTable">
+                    <p style="color: var(--color-text-secondary);">Loading events...</p>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="ownerSettings" class="owner-content hidden">
+                <h3 style="color: var(--color-primary); margin-bottom: var(--space-24);">Club Settings</h3>
+                <form id="clubSettingsForm">
+                    <div class="form__grid">
+                        <div class="form-group">
+                            <label class="form-label">Club Name</label>
+                            <input type="text" name="settingsClubName" id="settingsClubName" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Genre/Music Type</label>
+                            <input type="text" name="settingsGenre" id="settingsGenre" class="form-control" placeholder="e.g. Electronic, Hip-Hop, Bollywood">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Max Capacity</label>
+                            <input type="number" name="settingsCapacity" id="settingsCapacity" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Entry Fee (₹)</label>
+                            <input type="number" name="settingsFee" id="settingsFee" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Operating Hours</label>
+                            <input type="text" name="settingsHours" id="settingsHours" class="form-control" placeholder="e.g. 9 PM - 3 AM">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Contact Phone</label>
+                            <input type="tel" name="settingsPhone" id="settingsPhone" class="form-control">
+                        </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label class="form-label">Club Description</label>
+                            <textarea name="settingsDescription" id="settingsDescription" class="form-control" rows="3" placeholder="Describe your club's atmosphere and unique features"></textarea>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn--primary">Update Club Settings</button>
+                </form>
+            </section>
+        </div>
+    </section>
+
+    <!-- Create Event Modal -->
+    <div id="createEventModal" class="modal hidden">
+        <div class="modal__backdrop"></div>
+        <div class="modal__content">
+            <div class="modal__header">
+                <h3>Create New Event</h3>
+                <button id="closeEventModal" class="modal__close">&times;</button>
+            </div>
+            <form id="createEventForm">
+                <div class="form__grid">
+                    <div class="form-group">
+                        <label class="form-label">Event Title <span class="required">*</span></label>
+                        <input type="text" name="eventTitle" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Event Date <span class="required">*</span></label>
+                        <input type="date" name="eventDate" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Event Time <span class="required">*</span></label>
+                        <input type="time" name="eventTime" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Ticket Price (₹) <span class="required">*</span></label>
+                        <input type="number" name="ticketPrice" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Member Price (₹)</label>
+                        <input type="number" name="memberPrice" class="form-control">
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label class="form-label">Event Description</label>
+                        <textarea name="eventDescription" class="form-control" rows="3" placeholder="Describe your event"></textarea>
+                    </div>
+                </div>
+                <div class="modal__actions">
+                    <button type="button" id="cancelEvent" class="btn btn--outline">Cancel</button>
+                    <button type="submit" class="btn btn--primary">Create Event</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="ownerSuccessModal" class="modal hidden">
+        <div class="modal__backdrop"></div>
+        <div class="modal__content">
+            <div class="success-icon">✓</div>
+            <h3 id="ownerSuccessTitle">Success!</h3>
+            <p id="ownerSuccessMessage">Operation completed successfully.</p>
+            <button id="closeOwnerSuccessModal" class="btn btn--primary">OK</button>
+        </div>
+    </div>
+
+    <script src="owner-app.js"></script>
+</body>
+</html>
